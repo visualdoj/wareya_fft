@@ -48,33 +48,28 @@ procedure fft_core(
 
 {$IF not Defined(FFT_CORE_ONLY)}
 procedure normalize_fft(input_real, input_imag: PDouble; size: UInt64);
-  // (in_real[], in_imag[], size)
-  //     divide the amplitude of each bin by the number of bins. obligatory
-  //     after fft() for audio. modifies the input.
+  // divide the amplitude of each bin by the number of bins. obligatory
+  // after fft() for audio. modifies the input.
 
 procedure half_normalize_fft(input_real, input_imag: PDouble; size: UInt64);
 
 procedure fft(input_real, input_imag: PDouble; size: UInt64; output_real, output_imag: PDouble);
-  // (<same as fft_core, sans [gap] and [forwards]>)
-  //    compute forwards fft.
+  // compute forwards fft, args are same as fft_core.
 
 procedure ifft(input_real, input_imag: PDouble; size: UInt64; output_real, output_imag: PDouble);
-  // (<same as fft_core, sans [gap] and [forwards]>)
-  //    compute backwards fft (inverse fft, ifft)
+  // compute backwards fft (inverse fft, ifft), args are same as fft_core
 
 procedure sanitize_fft(input_real, input_imag: PDouble; size: UInt64);
-  // (in_real[], in_imag[], size) moves all data to positive-frequency bins.
-  // yes, FFTs have negative frequencies for some reason. they're used to
-  // retain correlation data for complex inputs. for real inputs, the negative
-  // frequencies just mirror the positive ones and sap half their amplitude,
-  // therefore this function. for an explanation of what negative frequencies
-  // mean, see
+  // moves all data to positive-frequency bins.  yes, FFTs have negative
+  // frequencies for some reason. they're used to retain correlation data for
+  // complex inputs. for real inputs, the negative frequencies just mirror the
+  // positive ones and sap half their amplitude, therefore this function. for
+  // an explanation of what negative frequencies mean, see:
   // http://dsp.stackexchange.com/questions/431/what-is-the-physical-significance-of-negative-frequencies
 
 procedure unsanitize_fft(input_real, input_imag: PDouble; size: UInt64);
-  // (in_real[], in_imag[], size)
-  //     undo the above. note again that these two fuctions are not sensical
-  //     for complex inputs.
+  // undo the above. note again that these two fuctions are not sensical
+  // for complex inputs.
 {$ENDIF}
 
 implementation
