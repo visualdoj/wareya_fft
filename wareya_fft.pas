@@ -27,9 +27,9 @@ interface
 procedure fft_core(
   input_real: PDouble; // pointer to real-valued spatial samples (for audio,
                        // this is where your entire audio signal goes)
-  input_imag: PDouble; // pointer to imaginary-valued ones (not useful for audio)
-                       // in_imag is allowed to be nil. If so, it will be
-                       // treated as if it were all zeroes.
+  input_imag: PDouble; // pointer to imaginary-valued ones (not useful for
+                       // audio) in_imag is allowed to be nil. If so, it will
+                       // be treated as if it were all zeroes.
   size: UInt64; // number of complex samples per domain. for audio, this is the
                 // number of real samples you have. must be a power of 2.
                 // Algorithm will definitely fail and possibly crash otherwise,
@@ -42,13 +42,15 @@ procedure fft_core(
                         // complex number (2d vector) representing the phase
                         // and amplitude of the given frequency band, even for
                         // wholly real inputs.
-  forwards: Boolean // if true, transform is forwards (fft). if false, transform is backwards (ifft).
+  forwards: Boolean // if true, transform is forwards (fft). if false,
+                    // transform is backwards (ifft).
   );
 
 {$IF not Defined(FFT_CORE_ONLY)}
 procedure normalize_fft(input_real, input_imag: PDouble; size: UInt64);
   // (in_real[], in_imag[], size)
-  //     divide the amplitude of each bin by the number of bins. obligatory after fft() for audio. modifies the input.
+  //     divide the amplitude of each bin by the number of bins. obligatory
+  //     after fft() for audio. modifies the input.
 
 procedure half_normalize_fft(input_real, input_imag: PDouble; size: UInt64);
 
@@ -71,7 +73,8 @@ procedure sanitize_fft(input_real, input_imag: PDouble; size: UInt64);
 
 procedure unsanitize_fft(input_real, input_imag: PDouble; size: UInt64);
   // (in_real[], in_imag[], size)
-  //     undo the above. note again that these two fuctions are not sensical for complex inputs.
+  //     undo the above. note again that these two fuctions are not sensical
+  //     for complex inputs.
 {$ENDIF}
 
 implementation
@@ -85,7 +88,9 @@ begin
     Exit(nil);
 end;
 
-// For a 8-sample input, the FFT's last three bins contain "negative" frequencies. (So, the last (size/2)-1 bins.) They are only meaningful for complex inputs.
+// For a 8-sample input, the FFT's last three bins contain "negative"
+// frequencies. (So, the last (size/2)-1 bins.) They are only meaningful for
+// complex inputs.
 procedure fft_core(input_real, input_imag: PDouble; size, gap: UInt64; output_real, output_imag: PDouble; forwards: Boolean);
 var
   i: UInt64;
@@ -100,8 +105,10 @@ begin
       output_imag[0] := 0;
   end else begin
     size := size div 2;
-    // This algorithm works by extending the concept of how two-bin DFTs (discrete fourier transform) work, in order to correlate decimated DFTs, recursively.
-    // No, I'm not your guy if you want a proof of why it works, but it does.
+    // This algorithm works by extending the concept of how two-bin DFTs
+    // (discrete fourier transform) work, in order to correlate decimated DFTs,
+    // recursively.  No, I'm not your guy if you want a proof of why it works,
+    // but it does.
     fft_core(input_real, input_imag, size, gap * 2, output_real, output_imag, forwards);
     fft_core(@input_real[gap], fft_private_safe_addrof(input_imag,gap), size, gap*2, @output_real[size], @output_imag[size], forwards);
     // non-combed decimated output to non-combed correlated output
@@ -162,9 +169,11 @@ begin
   half_normalize_fft(output_real, output_imag, size); // see above, also causes ifft(fft(x)) to result in the original signal with no amplitude change
 end;
 
-// boost bins that are split into positive (A-handed spin) and negative (B-handed spin) parts
-// only useful if former input signal was not complex, for only needing to look at one bin to get the magnitude
-// FIXME or HELPME: How come the nyquist frequency is quiet in saw waves, but loud in pure signal?
+// boost bins that are split into positive (A-handed spin) and negative
+// (B-handed spin) parts only useful if former input signal was not complex,
+// for only needing to look at one bin to get the magnitude
+// FIXME or HELPME: How come the nyquist frequency is quiet in saw waves, but
+// loud in pure signal?
 procedure sanitize_fft(input_real, input_imag: PDouble; size: UInt64);
 var
   i: UInt64;

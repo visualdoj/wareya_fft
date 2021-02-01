@@ -31,7 +31,8 @@ procedure fft_core(
 {$IF not Defined(FFT_CORE_ONLY)}
 procedure normalize_fft(input_real, input_imag: PDouble; size: UInt64);
   // (in_real[], in_imag[], size)
-  //     divide the amplitude of each bin by the number of bins. obligatory after fft() for audio. modifies the input.
+  //     divide the amplitude of each bin by the number of bins. obligatory
+  //     after fft() for audio. modifies the input.
 
 procedure half_normalize_fft(input_real, input_imag: PDouble; size: UInt64);
 
@@ -54,6 +55,7 @@ procedure sanitize_fft(input_real, input_imag: PDouble; size: UInt64);
 
 procedure unsanitize_fft(input_real, input_imag: PDouble; size: UInt64);
   // (in_real[], in_imag[], size)
-  //     undo the above. note again that these two fuctions are not sensical for complex inputs.
+  //     undo the above. note again that these two fuctions are not sensical
+  //     for complex inputs.
 {$ENDIF}
 ```
